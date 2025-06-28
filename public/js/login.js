@@ -18,7 +18,7 @@ $(document).ready(function ()
             password:{
                 required:true,
                 minlength:6,
-                strong:true,
+                // strong:true,
             }
 
         },
@@ -29,7 +29,7 @@ $(document).ready(function ()
             },
             password:{
                 required:"Please Enter Your Password",
-                strong:"Please Enter At Least One Digit,Uppercase,Lowercase,Special Character",
+                // strong:"Please Enter At Least One Digit,Uppercase,Lowercase,Special Character",
                 minlength:"Please Enter At Least 6 Character",
             }
         },

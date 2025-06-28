@@ -21,7 +21,7 @@ $(document).ready(function () {
             },
             password_confirmation: {
                 required: true,
-                equalTo: "#password"
+                // equalTo: "#password"
             },
             state_id: {
                 required: true
