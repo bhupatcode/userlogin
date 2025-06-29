@@ -24,6 +24,17 @@ Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('
 // web.php
 Route::get('/check-email', [AuthController::class, 'checkEmail'])->name('check-email');
 
-Route::get('/dashboard', [AuthController::class, 'dashboard'])
-    ->name('dashboard')
-    ->middleware('auth');
+// Route::get('/my-profile', [AuthController::class, 'profile'])->name('profile');
+// Route::post('/my-profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+
+// Dashboard
+// Route::get('/dashboard', [AuthController::class, 'dashboard'])
+//     ->name('dashboard')
+//     ->middleware('auth');
+
+// Admin Only Route
+Route::get('/admin',[AuthController::class,'dashboard'])->middleware(['auth', 'role:admin'])->name('admin.dashboard');
+
+// User Only Route
+Route::get('/user', [AuthController::class,'dashboard'])->middleware(['auth', 'role:user'])->name('user.dashboard');
+

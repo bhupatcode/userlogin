@@ -77,42 +77,42 @@ $(document).ready(function () {
             $(element).removeClass('is-invalid');
         }
     });
-    let selectedCity = "{{ old('city_id', $userData->city_id ?? '') }}";
-    let selectedState = "{{ old('state_id', $userData->state_id ?? '') }}";
+    // let selectedCity = "{{ old('city_id', $userData->city_id ?? '') }}";
+    // let selectedState = "{{ old('state_id', $userData->state_id ?? '') }}";
 
-    if (selectedState) {
-        $.ajax({
-            url: "/get-cities",
-            type: "GET",
-            data: { state_id: selectedState },
-            success: function (data) {
-                $('#city_id').empty().append('<option value="">Select City</option>');
-                $.each(data, function (key, city) {
-                    let selected = (city.id == selectedCity) ? 'selected' : '';
-                    $('#city_id').append(`<option value="${city.id}" ${selected}>${city.cname}</option>`);
-                });
-            }
-        });
-    }
+    // if (selectedState) {
+    //     $.ajax({
+    //         url: "/get-cities",
+    //         type: "GET",
+    //         data: { state_id: selectedState },
+    //         success: function (data) {
+    //             $('#city_id').empty().append('<option value="">Select City</option>');
+    //             $.each(data, function (key, city) {
+    //                 let selected = (city.id == selectedCity) ? 'selected' : '';
+    //                 $('#city_id').append(`<option value="${city.id}" ${selected}>${city.cname}</option>`);
+    //             });
+    //         }
+    //     });
+    // }
 
-    $('#state_id').on('change', function () {
-        let stateID = $(this).val();
-        $('#city_id').empty().append('<option value="">Loading...</option>');
+    // $('#state_id').on('change', function () {
+    //     let stateID = $(this).val();
+    //     $('#city_id').empty().append('<option value="">Loading...</option>');
 
-        if (stateID) {
-            $.ajax({
-                url: "/get-cities",
-                type: "GET",
-                data: { state_id: stateID },
-                success: function (data) {
-                    $('#city_id').empty().append('<option value="">Select City</option>');
-                    $.each(data, function (key, city) {
-                        $('#city_id').append('<option value="' + city.id + '">' + city.cname + '</option>');
-                    });
-                }
-            });
-        }
-    });
+    //     if (stateID) {
+    //         $.ajax({
+    //             url: "/get-cities",
+    //             type: "GET",
+    //             data: { state_id: stateID },
+    //             success: function (data) {
+    //                 $('#city_id').empty().append('<option value="">Select City</option>');
+    //                 $.each(data, function (key, city) {
+    //                     $('#city_id').append('<option value="' + city.id + '">' + city.cname + '</option>');
+    //                 });
+    //             }
+    //         });
+    //     }
+    // });
     $('#email').on('blur', function () {
         let email = $(this).val();
         let $feedback = $('#email-feedback');

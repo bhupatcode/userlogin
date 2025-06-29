@@ -58,4 +58,13 @@ public function city()
             'password' => 'hashed',
         ];
     }
+    // app/Models/User.php
+
+public function getProfileImageUrlAttribute()
+{
+    return $this->profile_image
+        ? asset('uploads/profile/' . $this->profile_image)
+        : asset('default/profile.png'); // public/default/profile.png
+}
+
 }

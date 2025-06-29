@@ -56,24 +56,35 @@ class AuthController extends Controller
 
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // prevent session fixation
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'user') {
+            // $name=$user->name;
+            // $id=$user->id;
+            return redirect()->route('user.dashboard');
+        } else {
+            Auth::logout();
+            return redirect()->route('showlogin')->withErrors(['email' => 'Unauthorized role.']);
         }
-
-        return redirect()->route('showlogin')->withErrors([
-            'email' => 'Invalid email or password.',
-        ]);
     }
+
+    return redirect()->route('showlogin')->withErrors([
+        'email' => 'Invalid email or password.',
+    ]);
+}
 
 
     public function logout(Request $request)
@@ -88,11 +99,18 @@ class AuthController extends Controller
     public function dashboard()
     {
         $user = Auth::user(); // logged-in user
-
+        if($user->role === 'admin')
+        {
+            return view('admin.dashboard',[
+                'admin_id' => $user->id,
+                'admin_name' => $user->name,
+            ]);
+        }else {
         return view('auth.dashboard', [
             'user_id' => $user->id,
             'user_name' => $user->name
         ]);
+    }
     }
     public function editProfile()
     {
@@ -121,6 +139,12 @@ class AuthController extends Controller
         if (!$user) {
             abort(403, 'Unauthorized');
         }
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/profile'), $imageName);
+            $user->profile_image = $imageName;
+        }
 
         $user->update([
             'name' => $request->name,
@@ -131,7 +155,7 @@ class AuthController extends Controller
             'address' => $request->address,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
+        return redirect()->route('user.dashboard')->with('success', 'Profile updated successfully!');
     }
 
     public function checkEmail(Request $request)
