@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -38,3 +39,6 @@ Route::get('/admin',[AuthController::class,'dashboard'])->middleware(['auth', 'r
 // User Only Route
 Route::get('/user', [AuthController::class,'dashboard'])->middleware(['auth', 'role:user'])->name('user.dashboard');
 
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::resource('tasks', TaskController::class);
+});

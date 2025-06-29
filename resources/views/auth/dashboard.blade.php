@@ -15,6 +15,7 @@
 
     <!-- ✅ Buttons -->
     <a href="{{ route('profile.edit') }}" class="btn btn-primary mt-3">Edit Profile</a>
+    <a href="{{ route('tasks.index') }}" class="btn btn-primary mt-3">Tasks Manage</a>
 
     <form method="POST" action="{{ route('logout') }}" class="d-inline">
         @csrf

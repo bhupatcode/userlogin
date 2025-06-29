@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Task;
 
 class User extends Authenticatable
 {
@@ -34,6 +35,10 @@ public function state()
 public function city()
 {
     return $this->belongsTo(City::class);
+}
+public function tasks()
+{
+    return $this->hasMany(Task::class);
 }
 
     /**
