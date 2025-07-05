@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\State;
-use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\City;
+use App\Models\User;
+use App\Models\State;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 
 class AuthController extends Controller
@@ -44,7 +46,7 @@ class AuthController extends Controller
             'state_id' => $request->state_id,
             'city_id' => $request->city_id,
             'address' => $request->address,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
         ]);
 
         return redirect()->route('showlogin')->with('success', 'Registration successful! Please login.');
@@ -55,6 +57,37 @@ class AuthController extends Controller
     }
 
 
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     $credentials = $request->only('email', 'password');
+
+    //     if (Auth::attempt($credentials)) {
+    //         $request->session()->regenerate();
+
+    //         $user = Auth::user();
+
+    //         if ($user->role === 'admin') {
+    //             return redirect()->route('admin.dashboard');
+    //         } elseif ($user->role === 'user') {
+    //             // $name=$user->name;
+    //             // $id=$user->id;
+    //             return redirect()->route('user.dashboard');
+    //         } else {
+    //             Auth::logout();
+    //             return redirect()->route('showlogin')->withErrors(['email' => 'Unauthorized role.']);
+    //         }
+    //     }
+
+    //     return redirect()->route('showlogin')->withErrors([
+    //         'email' => 'Invalid email or password.',
+    //     ]);
+    // }
+
     public function login(Request $request)
 {
     $request->validate([
@@ -62,18 +95,18 @@ class AuthController extends Controller
         'password' => 'required',
     ]);
 
-    $credentials = $request->only('email', 'password');
+    // Get user manually (loop through all and compare decrypted emails)
+    $user = User::all()->first(function ($user) use ($request) {
+        return $user->email === $request->email;
+    });
 
-    if (Auth::attempt($credentials)) {
+    if ($user && Hash::check($request->password, $user->password)) {
+        Auth::login($user);
         $request->session()->regenerate();
-
-        $user = Auth::user();
 
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'user') {
-            // $name=$user->name;
-            // $id=$user->id;
             return redirect()->route('user.dashboard');
         } else {
             Auth::logout();
@@ -85,6 +118,7 @@ class AuthController extends Controller
         'email' => 'Invalid email or password.',
     ]);
 }
+
 
 
     public function logout(Request $request)
@@ -99,18 +133,17 @@ class AuthController extends Controller
     public function dashboard()
     {
         $user = Auth::user(); // logged-in user
-        if($user->role === 'admin')
-        {
-            return view('admin.dashboard',[
+        if ($user->role === 'admin') {
+            return view('admin.dashboard', [
                 'admin_id' => $user->id,
                 'admin_name' => $user->name,
             ]);
-        }else {
-        return view('auth.dashboard', [
-            'user_id' => $user->id,
-            'user_name' => $user->name
-        ]);
-    }
+        } else {
+            return view('auth.dashboard', [
+                'user_id' => $user->id,
+                'user_name' => $user->name
+            ]);
+        }
     }
     public function editProfile()
     {
